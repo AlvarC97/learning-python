@@ -3,136 +3,131 @@ Dev: Álvaro Castro
 Script description: Configure SQLite3 data
 '''
 
-#Import engine database package
+#Import engine database pack
 import sqlite3
 
-#Create a database connnection (Database name)
+#Create a database connection (Database name)
 con = sqlite3.connect('school.db')
 
-#Creating cursor object by conection => Let us execute sql commands or operations (Query)
+#Creating cursor objet by conection => let us execute sql comands operations (Query)
 cur = con.cursor()
 
-#Create students table
-students = '''
-    CREATE TABLE IF NOT EXISTS students (
-        id_student INTEGER PRIMARY KEY,
-        code VARCHAR(50) NOT NULL, 
-        id_person INTEGER,
-        status BOOLEAN NULL,
-        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
-        updated_at TIMESTAMP NULL,
-        deleted_at TIMESTAMP NULL,
-        FOREIGN KEY (id_person) REFERENCES persons(id_person)
-    );
+#create countries table
+countries_table = '''
+    CREATE TABLE IF NOT EXISTS countries (
+        id_countries INTEGER PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        abrev VARCHAR(10) NOT NULL,
+        descrip VARCHAR(10) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        deleted_at TIMESTAMP DEFAULT NULL
+    ); 
 '''
-#Execute SQL (Query)
-cur.execute(students)
 
-#Create identification_types table
-identification_types = '''
+#create department table
+department_table = '''
+    CREATE TABLE IF NOT EXISTS department (
+        id_department INTEGER PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        abrev VARCHAR(10) NOT NULL,
+        descrip VARCHAR(10) NOT NULL,
+        id_countries INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        deleted_at TIMESTAMP DEFAULT NULL,
+        FOREIGN KEY (id_countries) REFERENCES countries(id_countries)
+    ); 
+'''
+
+#create cities table
+cities_table = '''
+    CREATE TABLE IF NOT EXISTS cities (
+        id_cities INTEGER PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        abrev VARCHAR(10) NOT NULL,
+        descrip VARCHAR(10) NOT NULL,
+        id_department INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        deleted_at TIMESTAMP DEFAULT NULL,
+        FOREIGN KEY (id_department) REFERENCES department(id_department)
+    ); 
+'''
+
+#create identification_types table
+identification_types_table = '''
     CREATE TABLE IF NOT EXISTS identification_types (
-        id_ident_type INTEGER PRIMARY KEY,
+        id_identification_types INTEGER PRIMARY KEY,
         name VARCHAR(50) NOT NULL,
         abrev VARCHAR(10) NOT NULL,
-        descrip VARCHAR(100) NOT NULL,
-        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
-        updated_at TIMESTAMP NULL,
-        deleted_at TIMESTAMP NULL 
-    );
+        descrip VARCHAR(10) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        deleted_at TIMESTAMP DEFAULT NULL
+    ); 
 '''
-#Execute SQL (Query)
-cur.execute(identification_types)
 
-#Create persons table
-persons = '''
-    CREATE TABLE IF NOT EXISTS persons (
-        id_person INTEGER PRIMARY KEY,
-        firstname VARCHAR(50) NOT NULL,
-        lastname VARCHAR(50) NOT NULL,
-        id_ident_type INTEGER,
-        ident_number VARCHAR(15) NOT NULL,
-        id_exp_city INTEGER,
-        address VARCHAR(150) NOT NULL,
-        mobile VARCHAR(50) NOT NULL, 
-        id_user INTEGER,
-        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
-        updated_at TIMESTAMP NULL,
-        deleted_at TIMESTAMP NULL,
-        FOREIGN KEY (id_ident_type) REFERENCES identification_types(id_ident_type) 
-    );
-'''
-#Execute SQL (Query)
-cur.execute(persons)
-
-#Create users table
-users = '''
+#create users table
+users_table = '''
     CREATE TABLE IF NOT EXISTS users (
-        id_user INTEGER PRIMARY KEY,
+        id_users INTEGER PRIMARY KEY,
         email VARCHAR(100) NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        status BOOLEAN NULL,
-        id_ident_type INTEGER,
-        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
-        updated_at TIMESTAMP NULL,
-        deleted_at TIMESTAMP NULL,
-        FOREIGN KEY (id_user) REFERENCES persons(id_user)
-    );
+        password TEXT(250) NOT NULL,
+        status BOOLEAN NULL, 
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        deleted_at TIMESTAMP DEFAULT NULL
+    ); 
 '''
-#Execute SQL (Query)
-cur.execute(users)
 
-#Create cities table
-cities = '''
-    CREATE TABLE IF NOT EXISTS cities (
-        id_exp_city INTEGER PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        abrev VARCHAR(10) NOT NULL,
-        descrip VARCHAR(10) NOT NULL,
-        id_dept INTEGER,
-        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
-        updated_at TIMESTAMP NULL,
-        deleted_at TIMESTAMP NULL,
-        FOREIGN KEY (id_exp_city) REFERENCES persons(id_exp_city)
-    );
+#create persons table
+persons_table = '''
+    CREATE TABLE IF NOT EXISTS persons (
+        id_persons INTEGER PRIMARY KEY,
+        first_name VARCHAR(50) NOT NULL,
+        last_name VARCHAR(50) NOT NULL,
+        id_identification_types INTEGER,
+        ident_number VARCHAR(10) NOT NULL, 
+        id_cities INTEGER,
+        address VARCHAR(150) NOT NULL,
+        mobile VARCHAR(50) NOT NULL,
+        id_users INTEGER,  
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        deleted_at TIMESTAMP DEFAULT NULL,
+        FOREIGN KEY (id_cities) REFERENCES cities(id_cities),
+        FOREIGN KEY (id_identification_types) REFERENCES identification_types(id_identification_types),
+        FOREIGN KEY (id_users) REFERENCES users(id_users)
+            
+    ); 
 '''
-#Execute SQL (Query)
-cur.execute(cities)
 
-#Create deparmets table
-deparments = '''
-    CREATE TABLE IF NOT EXISTS departments (
-        id_dept INTEGER PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        abrev VARCHAR(10) NOT NULL,
-        descrip VARCHAR(10) NOT NULL,
-        id_country INTEGER,
-        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
-        updated_at TIMESTAMP NULL,
-        deleted_at TIMESTAMP NULL,
-        FOREIGN KEY (id_dept) REFERENCES cities(id_dept)
-    );
+#create students table
+students_table = '''
+    CREATE TABLE IF NOT EXISTS students (
+        id_students INTEGER PRIMARY KEY,
+        code VARCHAR(50) NOT NULL,
+        id_persons INTEGER,
+        status boolean NULL, 
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        deleted_at TIMESTAMP DEFAULT NULL,
+        FOREIGN KEY (id_persons) REFERENCES persons(id_persons)
+    ); 
 '''
-#Execute SQL (Query)
-cur.execute(deparments)
-#Create persons table
-countries = '''
-    CREATE TABLE IF NOT EXISTS countries (
-        id_country INTEGER PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        abrev VARCHAR(10) NOT NULL,
-        descrip VARCHAR(10) NOT NULL,
-        created_at TIMESTAMP DEFAULT (datetime('now','localtime')),
-        updated_at TIMESTAMP NULL,
-        deleted_at TIMESTAMP NULL,
-        FOREIGN KEY (id_country) REFERENCES departments(id_country)
-    );
-'''
-#Execute SQL (Query)
-cur.execute(countries)
-#Save changes in database => Push to database
+
+#EXECUTE SQL (Query)
+cur.execute(countries_table)
+cur.execute(department_table)
+cur.execute(cities_table)
+cur.execute(identification_types_table)
+cur.execute(users_table)
+cur.execute(persons_table)
+cur.execute(students_table)
+
+
+#Save changes database
 con.commit()
 
-#print("::: Database market has been created :::")
-
-#Close connection
-#con.close()
+#print(":::Database market has been create:::")
